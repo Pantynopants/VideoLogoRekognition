@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+  asdasdasdasdasdasd
+<script type="text/javascript" src="https://sdk.clarifai.com/js/clarifai-latest.js"></script>
+<video controls>
+    <source src="http://dev.musite.net/test/videoSnap/logo.MP4" type="video/mp4"></source>
+  </video>
+  <div id="target"></div>
+   <canvas id="canvas" width="640" height="480"></canvas>
+   <button id="snap" onclick="snap()">Snap Photo</button>
+      <script>
+      var video=document.querySelector('video');
+      var canvas=document.querySelector('canvas');
+      var context=canvas.getContext('2d');
+      var w,h,ratio;
+    //add loadedmetadata which will helps to identify video attributes......
+      video.addEventListener('loadedmetadata',function()   {
+        ratio=video.videoWidth/video.videoHeight;
+        w=video.videoWidth-100;
+        h=parseInt(w/ratio,10);
+        canvas.width=w;
+        canvas.height=h;
+      },false);
+    ///define a function
+    function snap()
+      {
+          context.fillRect(0,0,w,h);
+          context.drawImage(video,0,0,w,h);
+          var dataURL = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
+          // console.log(dataURL);
+          var target = document.getElementById('target'); 
+
+          const app = new Clarifai.App({apiKey: 'f7cfa78227654e299078ad48ef5d2c23'});
+
+          app.models.predict("c443119bf2ed4da98487520d01a0b1e3", {base64: dataURL}).then(
+              function(response) {
+                console.log(response);
+                console.log(response.outputs[0].data.regions.length);
+                var element = document.createElement('h1');
+
+                for (i = 0; i < response.outputs[0].data.regions.length; i++) {
+                    if(response.outputs[0].data.regions[i].data.concepts[0].value >= 0.2){
+
+                      element.appendChild(document.createTextNode(response.outputs[0].data.regions[i].data.concepts[0].name + "\t"));
+                      target.appendChild(element);
+                      console.log(response.outputs[0].data.regions[i].data.concepts[0].name);
+                  }
+                } 
+                
+                
+
+              });
+
+      }
+     </script>
+
+</body>
+</html>
+
+
