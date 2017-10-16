@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "clarifai": "^2.4.0",
+    "fluent-ffmpeg": "^2.1.2",
     "jss": "latest",
     "jss-preset-default": "latest",
     "material-ui": "^1.0.0-beta.16",
